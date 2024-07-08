@@ -1,0 +1,61 @@
+
+{{
+    config (
+           materialized = 'table'
+    )
+
+}}
+
+With first_transacoes as (
+
+    select
+        cod_transacao,
+        num_conta,
+        nome_transacao,
+        TIMESTAMP(SUBSTR(CAST(data_transacao AS STRING), 1, 19)) AS data_transacao,
+        valor_transacao, 
+    from `banvic-428216.b.transacoes` 
+
+),
+
+contas as (
+
+    select 
+        cod_cliente as id_cliente,
+        num_conta,
+        cod_agencia as id_agencia,
+        cod_colaborador as id_colaborador,
+        tipo_conta,
+        data_abertura,
+        round(saldo_total,3) as saldo_total,
+        round(saldo_disponivel) as saldo_disponivel,
+        TIMESTAMP(SUBSTR(CAST(data_ultimo_lancamento AS STRING), 1, 19)) as data_ultimo_lancamento
+    from `banvic-428216.b.contas `
+
+
+),
+
+transacoes as (
+
+    select
+    cod_transacao,
+    nome_transacao,
+    data_transacao,
+    valor_transacao,
+    c.*
+    from first_transacoes as f
+    left join contas as c on f.num_conta = c.num_conta
+
+)
+
+
+
+select * from transacoes
+
+
+
+
+
+
+
+

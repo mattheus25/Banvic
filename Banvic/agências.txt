@@ -1,0 +1,23 @@
+{{
+    config (
+           materialized = 'table'
+           )
+
+}}
+
+
+
+with agencias as (
+
+    select 
+    cod_agencia as id,
+    nome,
+    endereco,
+    cidade,
+    uf,
+    data_abertura,
+    tipo_agencia 
+    from `banvic-428216.b.agencias` 
+)
+
+select * from agencias

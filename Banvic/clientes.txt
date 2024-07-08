@@ -1,0 +1,29 @@
+
+{{
+    config (
+           materialized = 'table'
+           )
+
+}}
+
+
+with clientes as (
+
+select
+    cod_cliente as id,
+    primeiro_nome,
+    ultimo_nome,
+    data_inclusao,
+    cpfcnpj,
+    data_nascimento,
+    left(endereco,length(endereco)-4) as endereco,
+    Right(endereco,2) as uf,
+    case
+        when LENGTH(cep) = 8 then CONCAT(SUBSTR(cep, 1, 5), '-' , SUBSTR(cep, 6))
+        else cep
+    END AS cep
+from  `banvic-428216.b.clientes`
+
+)
+
+select * from clientes

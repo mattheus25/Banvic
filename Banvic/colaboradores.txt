@@ -1,0 +1,42 @@
+
+{{
+    config (
+           materialized = 'table'
+           )
+
+}}
+
+
+with colaboradores as (
+
+    select 
+        cod_colaborador as id,
+        primeiro_nome,
+        ultimo_nome,
+        email, 
+        cpf,
+        data_nascimento,
+        left(endereco,length(endereco)-4) as endereco,
+        Right(endereco,2) as uf,
+        case
+            when LENGTH(cep) = 8 then CONCAT(SUBSTR(cep, 1, 5), '-' , SUBSTR(cep, 6))
+            else cep
+        END AS cep
+    from `banvic-428216.b.colaboradores `
+
+
+),
+
+colaboradores_agencias as (
+  
+     select 
+     c.*,
+     a.cod_agencia as id_agencia
+    from colaboradores as c 
+    left join `banvic-428216.b.colaborador_agência` as a on c.id = a.cod_colaborador
+
+
+
+)
+
+select * from colaboradores_agencias

@@ -1,0 +1,31 @@
+{{
+    config (
+           materialized = 'table'
+           )
+
+}}
+
+with dates as (
+
+select 
+    format_date('%Y', date_trunc (data_transacao, year)) as ano,
+    FORMAT_DATE('%Y-%m', TIMESTAMP_TRUNC(data_transacao, MONTH)) as mes_ano,
+    LEFT(FORMAT_DATE('%b', data_transacao), 3) as mes,
+    case 
+        when EXTRACT(DAY FROM data_transacao) <= 15 then 'first half of the month'
+        else 'Second half of the month'
+    end as quinzena,
+    case 
+        when EXTRACT(DAY FROM data_transacao) <= 7 then 'Semana 1'
+        when EXTRACT(DAY FROM data_transacao) <= 14 then 'Semana 2'
+        when EXTRACT(DAY FROM data_transacao) <= 21 then 'Semana 3'
+        when EXTRACT(DAY FROM data_transacao) <= 28 then 'Semana 4'
+        else 'Semana 5'
+    end as semana_do_mes,
+    EXTRACT(DAYOFWEEK FROM data_transacao) as dia_da_semana,
+    data_transacao as data 
+from `banvic-428216.b.transacoes`
+
+)
+
+select * from dates 
